@@ -93,7 +93,7 @@ jobs:
       - name: Install the virtual screen tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq xvfb xdotool imagemagick libgl1-mesa-dri libglx-mesa0 libegl-mesa0 mesa-vulkan-drivers >/dev/null
+          sudo apt-get install -y -qq xvfb xdotool imagemagick mesa-utils libgl1-mesa-dri libglx-mesa0 libegl-mesa0 libgles2 mesa-vulkan-drivers >/dev/null
 
       - name: Start the game and check it loads
         run: bash .github/smoke-test.sh

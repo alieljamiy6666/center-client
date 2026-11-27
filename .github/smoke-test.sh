@@ -34,7 +34,7 @@ javac -J-Xmx4g -nowarn -encoding UTF-8 --release 17 -proc:none -cp "$DEPS" -d "$
 
 # ---- 2. Start a virtual screen and the game -----------------------------------
 # The game makes its window 200 x 250 smaller than the screen, so this gives a 1366 x 768 window.
-Xvfb :99 -screen 0 1566x1018x24 -nolisten tcp >/dev/null 2>&1 &
+Xvfb :99 -screen 0 1566x1018x24 +extension GLX +render -noreset -nolisten tcp >/dev/null 2>&1 &
 export DISPLAY=:99
 sleep 2
 
@@ -46,15 +46,22 @@ RT="$RT:Java-WebSocket-1.5.1-with-dependencies.jar:webrtc-java-0.8.0.jar"
 start_game() {
 	cd "$ROOT/desktopRuntime"
 	if [ "$2" = "yes" ]; then
-		LD_LIBRARY_PATH="$ROOT/desktopRuntime" java -Xmx2G -Djava.library.path=. -cp "$OUT/classes:$RT" \
+		LD_LIBRARY_PATH="$ROOT/desktopRuntime" java -Xmx2G $JDEBUG -Djava.library.path=. -cp "$OUT/classes:$RT" \
 			net.lax1dude.eaglercraft.internal.MainClass hide-renderdoc $1 > "$LOG" 2>&1 &
 	else
-		java -Xmx2G -Djava.library.path=. -cp "$OUT/classes:$RT" \
+		java -Xmx2G $JDEBUG -Djava.library.path=. -cp "$OUT/classes:$RT" \
 			net.lax1dude.eaglercraft.internal.MainClass hide-renderdoc $1 > "$LOG" 2>&1 &
 	fi
 	GAME=$!
 	cd "$ROOT"
 }
+
+# What the virtual screen offers (for working out graphics problems).
+echo "----- graphics on the virtual screen -----"
+eglinfo -B 2>&1 | grep -iE "platform|version|renderer|error" | head -n 30
+glxinfo -B 2>&1 | grep -iE "version|renderer|error" | head -n 10
+export EGL_LOG_LEVEL=debug LIBGL_DEBUG=verbose
+JDEBUG="-Dorg.lwjgl.util.Debug=true -Dorg.lwjgl.util.DebugLoader=true"
 
 # A virtual screen has no graphics card, so try a few software graphics setups until one works.
 STARTED=no
@@ -72,7 +79,7 @@ for setup in "opengl yes" "vulkan yes" "default yes" "default no"; do
 		grep -E "OpenGL Version|OpenGL Renderer|ANGLE Platform" "$LOG"
 		break
 	fi
-	grep -E "ERROR|Exception" "$LOG" | head -n 5
+	grep -vE "^\s+at " "$LOG" | grep -iE "error|exception|fail|libEGL|libGLES|egl|glfw|loaded|warn" | head -n 40
 	kill "$GAME" 2>/dev/null
 	sleep 1
 done
