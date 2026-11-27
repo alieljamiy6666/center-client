@@ -61,8 +61,8 @@ public final class EventHooks {
 		if (button < 0 || !CenterClient.isInitialized()) {
 			return; // not a button (mouse movement or the wheel)
 		}
-		if (pressed) {
-			ClickTracker.onGameMouseDown(button);
+		if (pressed && Minecraft.getMinecraft().currentScreen == null) {
+			ClickTracker.onMouseDown(button); // only count clicks while playing, not in menus
 		}
 		CenterClient.EVENTS.post(MOUSE.set(button, pressed));
 	}

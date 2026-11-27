@@ -283,7 +283,6 @@ public class PlatformInput {
 				int b = evt.getButton();
 				b = b == 1 ? 2 : (b == 2 ? 1 : b);
 				if(b >= 0 && b < buttonStates.length) buttonStates[b] = true;
-				net.centerclient.util.ClickTracker.onBrowserMouseDown(b); // Center Client: exact click times for CPS
 				int eventX = (int)(getOffsetX(evt, touchOffsetXTeaVM) * windowDPI);
 				int eventY = windowHeight - (int)(getOffsetY(evt, touchOffsetYTeaVM) * windowDPI) - 1;
 				synchronized(mouseEvents) {

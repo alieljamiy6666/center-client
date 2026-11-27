@@ -1,17 +1,11 @@
 package net.centerclient.util;
 
-import net.minecraft.client.Minecraft;
-
 /**
- * Counts mouse clicks per second, using the real time of every click.
+ * Counts mouse clicks per second: how many clicks happened in the last 1000
+ * milliseconds.
  *
- * In the browser, the click time is written down the moment the browser
- * reports the click (see the "// Center Client" line in PlatformInput), so even
- * very fast clicks between two game ticks or two frames are counted with their
- * exact time. CPS = how many clicks happened in the last 1000 milliseconds.
- *
- * Builds without that hook (the desktop test runtime) fall back to the game's
- * own mouse events.
+ * Clicks come from the game's own mouse handling (on the game thread), so
+ * nothing here ever runs before the game has finished starting up.
  */
 public final class ClickTracker {
 
@@ -24,28 +18,12 @@ public final class ClickTracker {
 
 	private static final long[][] times = new long[2][CAPACITY];
 	private static final int[] next = new int[2];
-	private static boolean browserHook;
 
 	private ClickTracker() {
 	}
 
-	/** Called by the browser's mouse-down handler, the instant a button goes down. */
-	public static void onBrowserMouseDown(int button) {
-		browserHook = true;
-		Minecraft mc = Minecraft.getMinecraft();
-		if (mc != null && mc.currentScreen == null) { // only count clicks while playing
-			record(button);
-		}
-	}
-
-	/** Called from the game's mouse loop. Only used when the browser hook isn't there. */
-	public static void onGameMouseDown(int button) {
-		if (!browserHook) {
-			record(button);
-		}
-	}
-
-	private static void record(int button) {
+	/** Called by the game (on its own thread) each time a mouse button goes down while you're playing. */
+	public static void onMouseDown(int button) {
 		if (button != LEFT && button != RIGHT) {
 			return;
 		}
@@ -53,7 +31,7 @@ public final class ClickTracker {
 		next[button] = (next[button] + 1) % CAPACITY;
 	}
 
-	/** Clicks of this button (LEFT or RIGHT) in the last second. */
+	/** How many times this button was clicked in the last second. */
 	public static int getCps(int button) {
 		long cutoff = System.currentTimeMillis() - WINDOW_MS;
 		long[] list = times[button];
