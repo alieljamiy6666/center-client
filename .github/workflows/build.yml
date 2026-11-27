@@ -1,0 +1,56 @@
+# Center Client: builds the client on GitHub's servers every time code is pushed.
+# You can also start it by hand from the Actions tab ("Run workflow").
+# When it finishes, download the results from the bottom of the run page (under "Artifacts").
+
+name: Build Center Client
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Install Java 17 (recommended for TeaVM)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: "Step 1 of 3: Pack the game assets (CompileEPK)"
+        run: sh CompileEPK.sh
+
+      - name: "Step 2 of 3: Turn the Java code into JavaScript (CompileJS)"
+        run: sh CompileJS.sh
+
+      - name: "Step 3 of 3: Make the single offline HTML file (MakeOfflineDownload)"
+        run: sh MakeOfflineDownload.sh
+
+      - name: Upload the offline HTML file
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-html
+          path: javascript/Eaglercraft_1.12_Offline_en_US.html
+          if-no-files-found: error
+
+      - name: Upload the web build (for hosting online)
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: |
+            javascript/index.html
+            javascript/classes.js
+            javascript/assets.epk
+            javascript/favicon.png
+            javascript/lang/
+          if-no-files-found: error
