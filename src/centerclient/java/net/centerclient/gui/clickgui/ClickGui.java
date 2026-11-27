@@ -11,6 +11,7 @@ import net.centerclient.event.Listener;
 import net.centerclient.gui.CenterSettingsScreen;
 import net.centerclient.gui.GuiUtil;
 import net.centerclient.gui.PixelIcon;
+import net.centerclient.hud.HudEditorScreen;
 import net.centerclient.module.Category;
 import net.centerclient.module.Module;
 import net.centerclient.theme.Theme;
@@ -336,20 +337,14 @@ public class ClickGui extends GuiScreen {
 
 		for (int i = 0; i < BOTTOM_LABELS.length; ++i) {
 			int y = bottomY(i);
-			boolean disabled = i == BOTTOM_HUD; // arrives in Step 9
-			boolean over = !disabled && isInside(mouseX, mouseY, winX + 4, y, sideW - 8, TAB_HEIGHT);
+			boolean over = isInside(mouseX, mouseY, winX + 4, y, sideW - 8, TAB_HEIGHT);
 			bottomHover[i].animateTo(over || (i == BOTTOM_PROFILES && profilesOpen) ? 1.0F : 0.0F);
 			float h = bottomHover[i].get();
 			if (h > 0.02F) {
 				RenderUtil.roundedRect(winX + 4, y, sideW - 8, TAB_HEIGHT, 4, ColorUtil.withAlpha(Theme.PANEL_HOVER, h));
 			}
-			int color = disabled ? ColorUtil.withAlpha(Theme.TEXT_FADED, 0.5F)
-					: ColorUtil.mix(Theme.TEXT_FADED, Theme.TEXT, h);
+			int color = ColorUtil.mix(Theme.TEXT_FADED, Theme.TEXT, h);
 			drawSidebarItem(BOTTOM_ICONS[i], BOTTOM_LABELS[i], y, color, h);
-			if (disabled && !compact) {
-				GuiUtil.text(this.fontRendererObj, "soon", winX + sideW - 8 - this.fontRendererObj.getStringWidth("soon"),
-						y + 5, ColorUtil.withAlpha(Theme.TEXT_FADED, 0.5F), false);
-			}
 		}
 	}
 
@@ -487,6 +482,11 @@ public class ClickGui extends GuiScreen {
 		if (isInside(mouseX, mouseY, winX + 4, bottomY(BOTTOM_SETTINGS), sideW - 8, TAB_HEIGHT)) {
 			playClick();
 			this.mc.displayGuiScreen(new CenterSettingsScreen(this));
+			return;
+		}
+		if (isInside(mouseX, mouseY, winX + 4, bottomY(BOTTOM_HUD), sideW - 8, TAB_HEIGHT)) {
+			playClick();
+			this.mc.displayGuiScreen(new HudEditorScreen(this));
 			return;
 		}
 		if (mouseY >= gridTop && mouseY < gridBottom) {

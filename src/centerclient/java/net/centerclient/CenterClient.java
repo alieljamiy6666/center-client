@@ -10,6 +10,7 @@ import net.centerclient.gui.LoadingScreen;
 import net.centerclient.gui.VanillaMainMenu;
 import net.centerclient.gui.clickgui.ClickGui;
 import net.centerclient.module.ModuleManager;
+import net.centerclient.module.hud.WatermarkModule;
 import net.centerclient.module.misc.TestModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -87,6 +88,7 @@ public final class CenterClient {
 
 	/** Every module gets added here. */
 	private static void registerModules() {
+		MODULES.register(new WatermarkModule());
 		MODULES.register(new TestModule());
 	}
 
