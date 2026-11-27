@@ -556,7 +556,9 @@ public class Minecraft implements IThreadListener {
 			this.displayGuiScreen(new GuiScreenEditProfile(new GuiMainMenu()));
 		}
 
-		this.renderEngine.deleteTexture(this.mojangLogo);
+		if (this.mojangLogo != null) { // Center Client: the Mojang logo is never loaded (Center Client loading screen)
+			this.renderEngine.deleteTexture(this.mojangLogo);
+		}
 		this.mojangLogo = null;
 		this.loadingScreen = new LoadingScreenRenderer(this);
 		this.debugRenderer = new DebugRenderer(this);
@@ -682,7 +684,7 @@ public class Minecraft implements IThreadListener {
 		}
 	}
 
-	private void updateDisplayMode() {
+	public void updateDisplayMode() { // Center Client: public so the loading screen can read the real window size
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
 		this.displayDPI = Display.getDPI();

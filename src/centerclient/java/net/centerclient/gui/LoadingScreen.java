@@ -69,6 +69,7 @@ public final class LoadingScreen {
 			float t = (float) frame / (float) SLIDE_FRAMES;
 			float eased = 1.0F - (1.0F - t) * (1.0F - t); // ease-out: fast at first, then gentle
 			shown = start + (target - start) * eased;
+			mc.updateDisplayMode(); // read the real window size (the game hasn't done it yet this early)
 			beginDrawing(mc);
 			draw(mc, shown, 1.0F);
 			endDrawing();

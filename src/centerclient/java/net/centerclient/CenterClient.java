@@ -121,8 +121,10 @@ public final class CenterClient {
 	 */
 	public static GuiScreen replaceScreen(GuiScreen screen) {
 		if (screen != null && screen.getClass() == GuiMainMenu.class) {
-			return new CenterMainMenu();
+			screen = new CenterMainMenu();
 		}
+		// one short line per screen change; helps when reading a crash log (and the automatic start-up test uses it)
+		LOGGER.info("Screen: " + (screen == null ? "none (playing)" : screen.getClass().getSimpleName()));
 		return screen;
 	}
 
