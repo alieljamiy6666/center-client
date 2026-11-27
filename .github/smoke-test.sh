@@ -38,14 +38,45 @@ Xvfb :99 -screen 0 1566x1018x24 -nolisten tcp >/dev/null 2>&1 &
 export DISPLAY=:99
 sleep 2
 
-cd "$ROOT/desktopRuntime"
 RT="UnsafeMemcpy.jar:lwjgl.jar:lwjgl-egl.jar:lwjgl-glfw.jar:lwjgl-jemalloc.jar:lwjgl-openal.jar:lwjgl-opengles.jar"
 RT="$RT:soundsystem-20120107.jar:codecjorbis-20101023.jar:codecwav-20101023.jar"
 RT="$RT:Java-WebSocket-1.5.1-with-dependencies.jar:webrtc-java-0.8.0.jar"
-java -Xmx2G -Djava.library.path=. -cp "$OUT/classes:$RT" net.lax1dude.eaglercraft.internal.MainClass \
-	hide-renderdoc opengl > "$LOG" 2>&1 &
-GAME=$!
-cd "$ROOT"
+
+# start_game <graphics> <use bundled ANGLE: yes/no>
+start_game() {
+	cd "$ROOT/desktopRuntime"
+	if [ "$2" = "yes" ]; then
+		LD_LIBRARY_PATH="$ROOT/desktopRuntime" java -Xmx2G -Djava.library.path=. -cp "$OUT/classes:$RT" \
+			net.lax1dude.eaglercraft.internal.MainClass hide-renderdoc $1 > "$LOG" 2>&1 &
+	else
+		java -Xmx2G -Djava.library.path=. -cp "$OUT/classes:$RT" \
+			net.lax1dude.eaglercraft.internal.MainClass hide-renderdoc $1 > "$LOG" 2>&1 &
+	fi
+	GAME=$!
+	cd "$ROOT"
+}
+
+# A virtual screen has no graphics card, so try a few software graphics setups until one works.
+STARTED=no
+for setup in "opengl yes" "vulkan yes" "default yes" "default no"; do
+	set -- $setup
+	ARG="$1"; [ "$ARG" = "default" ] && ARG=""
+	echo "Trying graphics: ${1}, bundled ANGLE: $2"
+	start_game "$ARG" "$2"
+	for i in $(seq 1 20); do
+		sleep 1
+		if grep -q "OpenGL Renderer" "$LOG"; then STARTED=yes; break; fi
+		kill -0 "$GAME" 2>/dev/null || break
+	done
+	if [ "$STARTED" = yes ]; then
+		grep -E "OpenGL Version|OpenGL Renderer|ANGLE Platform" "$LOG"
+		break
+	fi
+	grep -E "ERROR|Exception" "$LOG" | head -n 5
+	kill "$GAME" 2>/dev/null
+	sleep 1
+done
+[ "$STARTED" = yes ] || fail "no graphics setup worked on the virtual screen"
 
 # ---- Helpers -----------------------------------------------------------------
 WID=""
