@@ -99,7 +99,7 @@ public class CenterMainMenu extends GuiScreen {
 		multiplayerButton = new CenterButton("Multiplayer", false,
 				() -> this.mc.displayGuiScreen(new GuiMultiplayer(this)));
 		settingsButton = new CenterButton("Center Settings", false,
-				() -> this.mc.displayGuiScreen(new ThemeTestScreen(this)));
+				() -> this.mc.displayGuiScreen(new CenterSettingsScreen(this)));
 		optionsButton = new CenterButton("Options", false,
 				() -> this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings)));
 		vanillaButton = new CenterButton("Vanilla menu", false,

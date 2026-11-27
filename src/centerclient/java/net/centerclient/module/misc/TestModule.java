@@ -1,5 +1,9 @@
 package net.centerclient.module.misc;
 
+import net.centerclient.config.BooleanSetting;
+import net.centerclient.config.ColorSetting;
+import net.centerclient.config.ModeSetting;
+import net.centerclient.config.NumberSetting;
 import net.centerclient.event.ChatReceiveEvent;
 import net.centerclient.event.KeyEvent;
 import net.centerclient.event.Render2DEvent;
@@ -41,6 +45,15 @@ public class TestModule extends Module {
 	/** The text lines, rebuilt once a second or when a count changes, never every frame. */
 	private final String[] lines = new String[LINE_COUNT];
 	private int panelWidth;
+
+	// Settings (one of each kind, so Step 7 and 8 have something to save and show)
+	private final ModeSetting corner = add(new ModeSetting("Corner", "Top left", "Top left", "Top right"));
+	private final BooleanSetting showTitle = add(new BooleanSetting("Show title", true));
+	private final BooleanSetting background = add(new BooleanSetting("Background", true));
+	private final NumberSetting backgroundOpacity = add(
+			new NumberSetting("Background opacity", 0.9, 0.2, 1.0, 0.05).showWhen(background));
+	private final BooleanSetting customBorder = add(new BooleanSetting("Custom border color", false));
+	private final ColorSetting borderColor = add(new ColorSetting("Border color", 0xFFFFD23F).showWhen(customBorder));
 
 	public TestModule() {
 		super("Test Module", "Shows an event monitor so you can see the module system working", Category.MISC,
@@ -119,16 +132,23 @@ public class TestModule extends Module {
 			rebuildLines();
 		}
 
-		int x = 4;
-		int y = 4;
 		int lineHeight = 10;
-		int height = 16 + LINE_COUNT * lineHeight + 2;
-		RenderUtil.shadow(x, y + 1, panelWidth, height, 5, 3, 0x70000000);
-		RenderUtil.roundedRect(x, y, panelWidth, height, 5, ColorUtil.withAlpha(Theme.PANEL, 0.9F));
-		RenderUtil.roundedOutline(x, y, panelWidth, height, 5, 1, Theme.accent());
-		mc.fontRendererObj.drawString("Event monitor", x + 6, y + 5, Theme.accent(), true);
+		int top = showTitle.isOn() ? 16 : 5;
+		int height = top + LINE_COUNT * lineHeight + 2;
+		int x = corner.is("Top right") ? event.getWidth() - panelWidth - 4 : 4;
+		int y = 4;
+		int border = customBorder.isOn() ? borderColor.getColor() : Theme.accent();
+		if (background.isOn()) {
+			RenderUtil.shadow(x, y + 1, panelWidth, height, 5, 3, 0x70000000);
+			RenderUtil.roundedRect(x, y, panelWidth, height, 5,
+					ColorUtil.withAlpha(Theme.PANEL, backgroundOpacity.getFloat()));
+		}
+		RenderUtil.roundedOutline(x, y, panelWidth, height, 5, 1, border);
+		if (showTitle.isOn()) {
+			mc.fontRendererObj.drawString("Event monitor", x + 6, y + 5, border, true);
+		}
 		for (int i = 0; i < LINE_COUNT; ++i) {
-			mc.fontRendererObj.drawString(lines[i], x + 6, y + 17 + i * lineHeight, Theme.TEXT, false);
+			mc.fontRendererObj.drawString(lines[i], x + 6, y + top + 1 + i * lineHeight, Theme.TEXT, !background.isOn());
 		}
 	}
 

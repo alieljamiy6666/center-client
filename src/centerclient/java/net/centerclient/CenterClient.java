@@ -3,6 +3,7 @@ package net.centerclient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.centerclient.config.ConfigManager;
 import net.centerclient.event.EventBus;
 import net.centerclient.gui.CenterMainMenu;
 import net.centerclient.gui.LoadingScreen;
@@ -49,6 +50,9 @@ public final class CenterClient {
 	/** Every Center Client module. Ready once {@link #init(Minecraft)} has run. */
 	public static ModuleManager MODULES;
 
+	/** Saves and loads settings and profiles. Ready once {@link #init(Minecraft)} has run. */
+	public static ConfigManager CONFIG;
+
 	private static Minecraft mc;
 	private static boolean initialized = false;
 
@@ -69,6 +73,8 @@ public final class CenterClient {
 
 		MODULES = new ModuleManager(EVENTS);
 		registerModules();
+		CONFIG = new ConfigManager(MODULES, EVENTS);
+		CONFIG.load(); // brings back saved settings, profiles and the accent color
 		initialized = true;
 
 		LOGGER.info(NAME + " " + VERSION + " loaded with " + MODULES.getModules().size() + " modules");

@@ -1,5 +1,6 @@
 package net.centerclient.theme;
 
+import net.centerclient.config.ConfigManager;
 import net.centerclient.util.ColorUtil;
 
 /**
@@ -10,7 +11,7 @@ import net.centerclient.util.ColorUtil;
  *
  * Everything is fixed except the accent color, which the player can change.
  * The light and dark versions of the accent are worked out automatically.
- * (Step 7 will save the player's choice so it survives a reload.)
+ * The player's choice is saved by the ConfigManager.
  */
 public final class Theme {
 
@@ -68,11 +69,17 @@ public final class Theme {
 		return accentDark;
 	}
 
-	/** Picks one of the preset accent colors by its number. */
+	/** Picks one of the preset accent colors by its number (saved automatically). */
 	public static void setAccentPreset(int index) {
 		int count = ACCENT_PRESETS.length;
 		accentPreset = ((index % count) + count) % count; // wraps around: after the last comes the first
 		setAccent(ACCENT_PRESETS[accentPreset]);
+		ConfigManager.changed();
+	}
+
+	/** The number of the current preset accent color. */
+	public static int getAccentPreset() {
+		return accentPreset;
 	}
 
 	/** Switches to the next preset accent color and returns its name. */

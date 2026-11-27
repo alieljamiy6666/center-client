@@ -27,7 +27,7 @@ public class CenterButton {
 	private float width;
 	private float height;
 	private String label;
-	private final boolean primary;
+	private boolean primary;
 	private final Runnable onClick;
 
 	private final Animation hover = new Animation(160L, Easing.EASE_OUT, 0.0F);
@@ -55,6 +55,11 @@ public class CenterButton {
 			this.label = label;
 			this.shownLabelWidth = -1;
 		}
+	}
+
+	/** Primary buttons are filled with the accent color (for example, the selected profile). */
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
 	}
 
 	public boolean isMouseOver(int mouseX, int mouseY) {

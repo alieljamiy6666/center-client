@@ -1,9 +1,14 @@
 package net.centerclient.module;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import net.centerclient.CenterClient;
+import net.centerclient.config.ConfigManager;
+import net.centerclient.config.Setting;
 import net.centerclient.event.Event;
 import net.centerclient.event.Listener;
 import net.lax1dude.eaglercraft.KeyboardConstants;
@@ -39,9 +44,12 @@ public abstract class Module {
 	private final String name;
 	private final String description;
 	private final Category category;
+	private final int defaultKey;
 	private int key;
 	private boolean enabled;
 	private final List<Subscription<?>> subscriptions = new ArrayList<Subscription<?>>();
+	private final List<Setting<?>> settings = new ArrayList<Setting<?>>();
+	private final List<Setting<?>> readOnlySettings = Collections.unmodifiableList(settings);
 
 	protected Module(String name, String description, Category category) {
 		this(name, description, category, NO_KEY);
@@ -54,6 +62,7 @@ public abstract class Module {
 		this.name = name;
 		this.description = description;
 		this.category = category;
+		this.defaultKey = defaultKey;
 		this.key = defaultKey;
 	}
 
@@ -72,6 +81,7 @@ public abstract class Module {
 			return;
 		}
 		this.enabled = enable;
+		ConfigManager.changed();
 		if (enable) {
 			for (int i = 0; i < subscriptions.size(); ++i) {
 				subscriptions.get(i).subscribe();
@@ -142,12 +152,105 @@ public abstract class Module {
 	}
 
 	public final void setKey(int key) {
-		this.key = key;
+		if (key != this.key) {
+			this.key = key;
+			ConfigManager.changed();
+		}
 	}
 
 	/** The key's name, like "K", or "None". */
 	public final String getKeyName() {
 		return key == NO_KEY ? "None" : KeyboardConstants.getKeyName(key);
+	}
+
+	// ---- Settings and saving ----------------------------------------------------
+
+	/** Adds a setting to this module. Call it in the constructor. */
+	protected final <S extends Setting<?>> S add(S setting) {
+		settings.add(setting);
+		return setting;
+	}
+
+	/** This module's settings, in the order they were added. */
+	public final List<Setting<?>> getSettings() {
+		return readOnlySettings;
+	}
+
+	/** Turns the module off and puts its key and every setting back to default. */
+	public final void resetToDefaults() {
+		setEnabled(false);
+		setKey(defaultKey);
+		for (int i = 0; i < settings.size(); ++i) {
+			settings.get(i).reset();
+		}
+		resetExtra();
+	}
+
+	/** Extra things to save, like a HUD element's position. Override if needed. */
+	protected void saveExtra(JSONObject json) {
+	}
+
+	/** Reads what {@link #saveExtra} saved. Override if needed. */
+	protected void loadExtra(JSONObject json) {
+	}
+
+	/** Puts the extra things back to default. Override if needed. */
+	protected void resetExtra() {
+	}
+
+	/** This module as JSON: on/off, key, settings and extras. */
+	public final JSONObject toJson() {
+		JSONObject json = new JSONObject();
+		json.put("enabled", enabled);
+		json.put("key", key);
+		JSONObject values = new JSONObject();
+		for (int i = 0; i < settings.size(); ++i) {
+			Setting<?> s = settings.get(i);
+			values.put(s.getName(), s.toJson());
+		}
+		json.put("settings", values);
+		JSONObject extra = new JSONObject();
+		saveExtra(extra);
+		if (extra.length() > 0) {
+			json.put("extra", extra);
+		}
+		return json;
+	}
+
+	/**
+	 * Loads this module from JSON. Each part is read on its own, so one broken
+	 * or missing value just stays at its default instead of spoiling the rest.
+	 */
+	public final void fromJson(JSONObject json) {
+		JSONObject values = json.optJSONObject("settings");
+		if (values != null) {
+			for (int i = 0; i < settings.size(); ++i) {
+				Setting<?> s = settings.get(i);
+				Object saved = values.opt(s.getName());
+				if (saved != null) {
+					try {
+						s.fromJson(saved);
+					} catch (RuntimeException e) {
+						s.reset();
+					}
+				}
+			}
+		}
+		Object savedKey = json.opt("key");
+		if (savedKey instanceof Number) {
+			int k = ((Number) savedKey).intValue();
+			setKey(k >= 0 && k <= 255 ? k : defaultKey);
+		}
+		JSONObject extra = json.optJSONObject("extra");
+		if (extra != null) {
+			try {
+				loadExtra(extra);
+			} catch (RuntimeException e) {
+				resetExtra();
+			}
+		}
+		// last, so onEnable() already sees the loaded settings
+		setEnabled(json.optBoolean("enabled", false));
 	}
 
 	// ---- Helpers ----------------------------------------------------------------
