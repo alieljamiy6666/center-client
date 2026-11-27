@@ -56,6 +56,15 @@ start_game() {
 	cd "$ROOT"
 }
 
+# Start with the HUD modules turned on, so they get tested in the world later.
+# (The desktop version keeps saved data in files named _eagstorage.<key>.dat.)
+cat > "$ROOT/desktopRuntime/_eagstorage.centerclient.profile.Default.dat" <<'JSON'
+{"version":1,"modules":{
+"Watermark":{"enabled":true},"FPS":{"enabled":true},"Ping":{"enabled":true},"Speed":{"enabled":true},
+"CPS Counter":{"enabled":true},"Coordinates":{"enabled":true},"Clock":{"enabled":true},"Server Info":{"enabled":true},
+"Armor Status":{"enabled":true},"Potion Effects":{"enabled":true},"Keystrokes":{"enabled":true}}}
+JSON
+
 # What the virtual screen offers (for working out graphics problems).
 echo "----- graphics on the virtual screen -----"
 eglinfo -B 2>&1 | grep -iE "platform|version|renderer|error" | head -n 30
@@ -172,22 +181,81 @@ shot "edit_profile"
 read -r S W H <<< "$(gui_scale)"
 GW=$((W / S)); GH=$((H / S))
 echo "Window ${W}x${H}, GUI scale $S, GUI size ${GW}x${GH}"
-click_gui $((GW / 2)) $((GH / 6 + 168 + 10)) # "Done"
+
+wait_for_screen() { # wait_for_screen <name> <count before> <seconds>
+	local i=0
+	while [ "$i" -lt "$3" ]; do
+		[ "$(screen_count "$1")" -gt "$2" ] && return 0
+		alive || fail "the game closed while waiting for screen $1"
+		crashed && fail "the game crashed while waiting for screen $1"
+		sleep 1
+		i=$((i + 1))
+	done
+	fail "timed out waiting for screen $1"
+}
+
+click_gui $((GW / 2)) $((GH / 6 + 168 + 10)) # "Done" on the profile screen
 sleep 2
 if grep -q "Screen: GuiScreenDefaultUsernameNote" "$LOG"; then
-	shot "username_note" thumbnail
 	click_gui $((GW / 2)) $((GH / 6 + 142 + 10)) # "Continue anyway"
 	sleep 2
 fi
+if grep -q "Screen: GuiScreenFirstLoad" "$LOG"; then
+	shot "first_load_notice" thumbnail
+	BEFORE=$(screen_count CenterMainMenu)
+	click_gui $((GW / 2)) $((GH / 2 + 30 + 10)) # "I Understand"
+	wait_for_screen CenterMainMenu "$BEFORE" 20
+fi
 wait_for_log "Screen: CenterMainMenu" 20
-sleep 2
+sleep 3 # let the buttons slide in
 shot "main_menu"
 
-# ---- 5. Open the Right Shift menu --------------------------------------------
+# ---- 5. The Right Shift menu on the title screen -----------------------------
+BEFORE=$(screen_count ClickGui)
 key Shift_R
+wait_for_screen ClickGui "$BEFORE" 10
+sleep 1.5
+shot "click_gui_menu"
+key Escape
+sleep 1.5
+
+# ---- 6. Make a world and test the HUD in game --------------------------------
+# Center Client title screen: the Singleplayer button
+LOGO_Y=$(( (GH - 161) / 2 - 10 )); [ "$LOGO_Y" -lt 10 ] && LOGO_Y=10
+ROW1=$((LOGO_Y + 75 + 14 + 22 + 6))
+click_gui $((GW / 2 - 100 + 49)) $((ROW1 + 10))
 sleep 2
-crashed && fail "the game crashed after pressing Right Shift"
-shot "click_gui"
+if grep -q "Screen: GuiWorldSelection" "$LOG"; then
+	shot "world_list" thumbnail
+	click_gui $((GW / 2 + 4 + 75)) $((GH - 52 + 10)) # "Create New World"
+	sleep 2
+fi
+wait_for_log "Screen: GuiCreateWorld" 10
+click_gui $((GW / 2 - 155 + 75)) $((GH - 28 + 10)) # "Create New World"
+echo "Making a world..."
+wait_for_log "Screen: none (playing)" 180
+sleep 6 # let the chunks appear
+shot "in_game_hud"
+
+# Hold W: the Keystrokes W key should light up
+xdotool windowfocus --sync "$WID" 2>/dev/null
+xdotool keydown w
+sleep 0.6
+shot "keystrokes_w_held"
+xdotool keyup w
+sleep 0.5
+
+# Click fast: the CPS numbers should go up
+xdotool click --repeat 7 --delay 90 1
+shot "cps_after_clicks"
+sleep 1.5
+
+# The Right Shift menu in game
+BEFORE=$(screen_count ClickGui)
+key Shift_R
+wait_for_screen ClickGui "$BEFORE" 10
+sleep 1.5
+shot "click_gui_in_game"
 key Escape
 sleep 1
 
