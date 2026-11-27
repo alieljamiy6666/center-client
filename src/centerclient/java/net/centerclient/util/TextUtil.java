@@ -24,6 +24,34 @@ public final class TextUtil {
 		font.drawString(text, x, y, color, true);
 	}
 
+	/** A number with a fixed count of decimals, like formatDecimal(4.3219, 2) = "4.32". */
+	public static String formatDecimal(double value, int decimals) {
+		long factor = 1L;
+		for (int i = 0; i < decimals; ++i) {
+			factor *= 10L;
+		}
+		long scaled = Math.round(Math.abs(value) * factor);
+		StringBuilder sb = new StringBuilder();
+		if (value < 0.0 && scaled != 0L) {
+			sb.append('-');
+		}
+		sb.append(scaled / factor);
+		if (decimals > 0) {
+			String fraction = Long.toString(scaled % factor);
+			sb.append('.');
+			for (int i = fraction.length(); i < decimals; ++i) {
+				sb.append('0');
+			}
+			sb.append(fraction);
+		}
+		return sb.toString();
+	}
+
+	/** A number with at least two digits, like 7 = "07" (for clocks). */
+	public static String twoDigits(int value) {
+		return value < 10 ? "0" + value : Integer.toString(value);
+	}
+
 	/**
 	 * Returns the text, cut short with "..." if it's wider than maxWidth.
 	 * If it already fits, the same text comes back and nothing new is made, so

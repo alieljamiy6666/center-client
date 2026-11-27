@@ -33,6 +33,8 @@ public final class Theme {
 	public static final int SUCCESS = 0xFF3DDC84;
 	/** Bad things: errors, "delete". */
 	public static final int DANGER = 0xFFFF4D5E;
+	/** In-between things: "careful", medium ping, half-broken armor. */
+	public static final int WARNING = 0xFFFFD23F;
 
 	// ---- The accent color -----------------------------------------------------
 

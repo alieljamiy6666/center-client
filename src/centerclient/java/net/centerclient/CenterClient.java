@@ -10,6 +10,14 @@ import net.centerclient.gui.LoadingScreen;
 import net.centerclient.gui.VanillaMainMenu;
 import net.centerclient.gui.clickgui.ClickGui;
 import net.centerclient.module.ModuleManager;
+import net.centerclient.module.hud.ArmorStatusModule;
+import net.centerclient.module.hud.ClockModule;
+import net.centerclient.module.hud.CoordinatesModule;
+import net.centerclient.module.hud.FpsModule;
+import net.centerclient.module.hud.PingModule;
+import net.centerclient.module.hud.PotionEffectsModule;
+import net.centerclient.module.hud.ServerInfoModule;
+import net.centerclient.module.hud.SpeedModule;
 import net.centerclient.module.hud.WatermarkModule;
 import net.centerclient.module.misc.TestModule;
 import net.minecraft.client.Minecraft;
@@ -88,7 +96,17 @@ public final class CenterClient {
 
 	/** Every module gets added here. */
 	private static void registerModules() {
+		// HUD
 		MODULES.register(new WatermarkModule());
+		MODULES.register(new FpsModule());
+		MODULES.register(new PingModule());
+		MODULES.register(new SpeedModule());
+		MODULES.register(new CoordinatesModule());
+		MODULES.register(new ClockModule());
+		MODULES.register(new ServerInfoModule());
+		MODULES.register(new ArmorStatusModule());
+		MODULES.register(new PotionEffectsModule());
+		// Misc
 		MODULES.register(new TestModule());
 	}
 

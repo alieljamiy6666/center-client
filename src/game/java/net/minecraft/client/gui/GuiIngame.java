@@ -2,6 +2,7 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Predicate;
 import net.centerclient.event.EventHooks; // Center Client
+import net.centerclient.module.hud.PotionEffectsModule; // Center Client
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -418,6 +419,9 @@ public class GuiIngame extends Gui {
 	}
 
 	protected void renderPotionEffects(ScaledResolution resolution) {
+		if (PotionEffectsModule.hidesVanillaIcons()) {
+			return; // Center Client: the Potion Effects HUD module shows them instead
+		}
 		Collection<PotionEffect> collection = this.mc.player.getActivePotionEffects();
 
 		if (!collection.isEmpty()) {

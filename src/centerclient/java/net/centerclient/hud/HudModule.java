@@ -89,6 +89,14 @@ public abstract class HudModule extends Module {
 	 */
 	protected abstract void draw(boolean editing);
 
+	/**
+	 * True when there's nothing to show right now (for example, no potion
+	 * effects). Empty elements aren't drawn at all, except in the HUD editor.
+	 */
+	public boolean isEmpty() {
+		return false;
+	}
+
 	/** The background color. Override to change it. */
 	protected int getBackgroundColor() {
 		return ColorUtil.withAlpha(Theme.PANEL, 0.75F);
@@ -103,6 +111,9 @@ public abstract class HudModule extends Module {
 
 	/** Draws the element where it belongs on a screen of this size. */
 	public final void render(int screenWidth, int screenHeight, boolean editing) {
+		if (!editing && isEmpty()) {
+			return;
+		}
 		float s = getScale();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getScreenX(screenWidth), getScreenY(screenHeight), 0.0F);

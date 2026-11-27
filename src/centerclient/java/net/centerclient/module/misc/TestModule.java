@@ -54,7 +54,7 @@ public class TestModule extends HudModule {
 
 	public TestModule() {
 		super("Test Module", "Shows an event monitor so you can see the module system working", Category.MISC,
-				KeyboardConstants.KEY_K, END, START, 0.995F, 0.01F);
+				KeyboardConstants.KEY_K, START, CENTER, 0.005F, 0.55F);
 		listen(TickEvent.class, this::onTick);
 		listen(Render2DEvent.class, this::onFrame);
 		listen(Render3DEvent.class, this::onRender3D);
