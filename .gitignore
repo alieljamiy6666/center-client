@@ -16,3 +16,14 @@ desktopRuntime/filesystem/*
 desktopRuntime/crash-reports/*
 desktopRuntime/downloads/*
 desktopRuntime/screenshots/*
+
+# Center Client: build output. GitHub rebuilds these on every push,
+# so they don't need to be saved in the repo.
+/javascript/classes.js
+/javascript/classes.js.map
+/javascript/assets.epk
+/javascript/Eaglercraft_*_Offline_*.html
+
+# Center Client: system and log clutter
+.DS_Store
+*.log

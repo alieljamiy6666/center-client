@@ -19,7 +19,8 @@ sourceSets {
 		"src/main/java",
                 "src/game/java",
                	"src/protocol-game/java",
-		"src/teavm/java"
+		"src/teavm/java",
+		"src/centerclient/java" // Center Client: all Center Client code lives here
             )
         }
     }
@@ -29,6 +30,7 @@ sourceSets {
             srcDir 'src/game/java'
             srcDir 'src/protocol-game/java'
 	    srcDir 'src/lwjgl/java'
+            srcDir 'src/centerclient/java' // Center Client
         }
     }
 }

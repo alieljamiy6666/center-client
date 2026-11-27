@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import net.centerclient.CenterClient; // Center Client
 import net.lax1dude.eaglercraft.ClientUUIDLoadingCache;
 import net.lax1dude.eaglercraft.Display;
 import net.lax1dude.eaglercraft.EagRuntime;
@@ -537,6 +538,9 @@ public class Minecraft implements IThreadListener {
 		ServerList.initServerList(this);
 		EaglerProfile.read();
 		ServerCookieDataStore.load();
+
+		// Center Client: start Center Client now that the window, textures, fonts and sounds are ready
+		CenterClient.init(this);
 
 		if (this.serverName != null) {
 			this.displayGuiScreen(new GuiConnecting(new GuiScreenEditProfile(new GuiMainMenu()), this, this.serverName,
