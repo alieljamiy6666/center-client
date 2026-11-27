@@ -54,3 +54,29 @@ jobs:
             javascript/favicon.png
             javascript/lang/
           if-no-files-found: error
+
+      # Copies the web build into the public center-client-play repo, which
+      # GitHub Pages turns into the test website. Needs the SITE_DEPLOY_TOKEN
+      # secret; without it this step just skips.
+      - name: Publish the test website
+        if: github.ref == 'refs/heads/main'
+        env:
+          SITE_TOKEN: ${{ secrets.SITE_DEPLOY_TOKEN }}
+          SITE_REPO: alieljamiy6666/center-client-play
+        run: |
+          if [ -z "$SITE_TOKEN" ]; then
+            echo "No SITE_DEPLOY_TOKEN secret yet, so the website was not updated."
+            exit 0
+          fi
+          mkdir site
+          cp javascript/index.html javascript/classes.js javascript/assets.epk javascript/favicon.png site/
+          cp -r javascript/lang site/
+          touch site/.nojekyll
+          cd site
+          git init -q -b main
+          git config user.name "Center Client build"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Center Client build ${GITHUB_SHA::7}"
+          git push -q --force "https://x-access-token:${SITE_TOKEN}@github.com/${SITE_REPO}.git" main
+          echo "Website updated: https://alieljamiy6666.github.io/center-client-play/"
