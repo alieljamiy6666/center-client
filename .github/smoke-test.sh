@@ -60,8 +60,9 @@ start_game() {
 echo "----- graphics on the virtual screen -----"
 eglinfo -B 2>&1 | grep -iE "platform|version|renderer|error" | head -n 30
 glxinfo -B 2>&1 | grep -iE "version|renderer|error" | head -n 10
-export EGL_LOG_LEVEL=debug LIBGL_DEBUG=verbose
-JDEBUG="-Dorg.lwjgl.util.Debug=true -Dorg.lwjgl.util.DebugLoader=true"
+# No speakers on the test computer: give OpenAL a silent sound device so the game doesn't wait 30 seconds for sound.
+export ALSOFT_DRIVERS=null
+JDEBUG=""
 
 # A virtual screen has no graphics card, so try a few software graphics setups until one works.
 STARTED=no
@@ -89,7 +90,9 @@ done
 WID=""
 find_window() {
 	[ -n "$WID" ] && return 0
-	WID="$(xdotool search --name "Center Client" 2>/dev/null | head -n 1)"
+	# no window manager runs on the virtual screen, so the game's window is the only visible one
+	WID="$(xdotool search --onlyvisible --name "." 2>/dev/null | tail -n 1)"
+	[ -n "$WID" ] && echo "Game window: $WID \"$(xdotool getwindowname "$WID" 2>/dev/null)\""
 	[ -n "$WID" ]
 }
 
@@ -150,12 +153,15 @@ key() { # key <xdotool key name>
 screen_count() { grep -c "Screen: $1" "$LOG"; }
 
 # ---- 3. The loading screen ---------------------------------------------------
-for n in 01 02 03 04 05 06 07 08 09 10 11 12; do
-	sleep 2
+wait_for_log "Initializing Hooks" 90
+find_window
+n=0
+while [ "$n" -lt 30 ] && ! grep -q "Screen: " "$LOG"; do
 	alive || fail "the game closed while loading"
 	crashed && fail "the game crashed while loading"
-	shot "loading_$n" thumbnail
-	grep -q "modules" "$LOG" && grep -q "Screen: " "$LOG" && break
+	n=$((n + 1))
+	shot "loading_$(printf %02d $n)" thumbnail
+	sleep 0.4
 done
 wait_for_log "Screen: GuiScreenEditProfile" 150
 find_window || fail "couldn't find the game window"
