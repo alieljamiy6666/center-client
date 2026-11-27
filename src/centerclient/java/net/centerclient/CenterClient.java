@@ -3,9 +3,12 @@ package net.centerclient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.centerclient.event.EventBus;
 import net.centerclient.gui.CenterMainMenu;
 import net.centerclient.gui.LoadingScreen;
 import net.centerclient.gui.VanillaMainMenu;
+import net.centerclient.module.ModuleManager;
+import net.centerclient.module.misc.TestModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,8 +20,8 @@ import net.minecraft.client.gui.GuiScreen;
  * {@link #init(Minecraft)} once at startup, after the window, textures, fonts
  * and sounds are ready, and just before the first menu opens.
  *
- * Later steps will start the theme, modules, settings, HUD and menus from
- * inside {@link #init(Minecraft)}.
+ * It holds the event bus ({@link #EVENTS}) and the module list
+ * ({@link #MODULES}). New modules are added in {@link #registerModules()}.
  */
 public final class CenterClient {
 
@@ -40,6 +43,12 @@ public final class CenterClient {
 
 	private static final Logger LOGGER = LogManager.getLogger(NAME);
 
+	/** Delivers game events (ticks, frames, keys, chat...) to modules. */
+	public static final EventBus EVENTS = new EventBus();
+
+	/** Every Center Client module. Ready once {@link #init(Minecraft)} has run. */
+	public static ModuleManager MODULES;
+
 	private static Minecraft mc;
 	private static boolean initialized = false;
 
@@ -56,13 +65,21 @@ public final class CenterClient {
 		if (initialized) {
 			return; // Only start once, even if something calls this twice.
 		}
-		initialized = true;
 		mc = minecraft;
 
-		LOGGER.info(NAME + " " + VERSION + " loaded");
+		MODULES = new ModuleManager(EVENTS);
+		registerModules();
+		initialized = true;
+
+		LOGGER.info(NAME + " " + VERSION + " loaded with " + MODULES.getModules().size() + " modules");
 
 		// Fill the loading bar to 100% before the first menu opens.
 		LoadingScreen.finish(minecraft);
+	}
+
+	/** Every module gets added here. */
+	private static void registerModules() {
+		MODULES.register(new TestModule());
 	}
 
 	/**

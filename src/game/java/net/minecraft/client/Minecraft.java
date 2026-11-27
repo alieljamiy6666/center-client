@@ -13,6 +13,7 @@ import java.util.concurrent.Callable;
 
 import net.centerclient.CenterClient; // Center Client
 import net.centerclient.gui.LoadingScreen; // Center Client
+import net.centerclient.event.EventHooks; // Center Client
 import net.lax1dude.eaglercraft.ClientUUIDLoadingCache;
 import net.lax1dude.eaglercraft.Display;
 import net.lax1dude.eaglercraft.EagRuntime;
@@ -1409,6 +1410,7 @@ public class Minecraft implements IThreadListener {
 			}
 		}
 
+		EventHooks.onTick(); // Center Client: TickEvent
 		this.systemTime = getSystemTime();
 	}
 
@@ -1434,6 +1436,7 @@ public class Minecraft implements IThreadListener {
 			}
 
 			this.dispatchKeypresses();
+			EventHooks.onKey(i, Keyboard.getEventKeyState(), Keyboard.isRepeatEvent(), this.currentScreen != null); // Center Client: KeyEvent
 
 			if (this.currentScreen != null) {
 				this.currentScreen.handleKeyboardInput();
@@ -1822,6 +1825,7 @@ public class Minecraft implements IThreadListener {
 
 		System.gc();
 		this.systemTime = 0L;
+		EventHooks.onWorldLoad(worldClientIn); // Center Client: WorldLoadEvent
 	}
 
 	public void setDimensionAndSpawnPlayer(int dimension) {

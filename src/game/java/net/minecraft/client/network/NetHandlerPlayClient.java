@@ -1,6 +1,7 @@
 package net.minecraft.client.network;
 
 import com.google.common.collect.Maps;
+import net.centerclient.event.EventHooks; // Center Client
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import java.io.IOException;
@@ -407,6 +408,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 		this.netManager.sendPacket(new CPacketCustomPayload("MC|Brand",
 				(new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
 		WebViewOverlayController.setPacketSendCallback(this::webViewSendHandler);
+		EventHooks.onServerJoin(); // Center Client: ServerJoinEvent
 	}
 
 	/**
@@ -912,7 +914,11 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 	 * Prints a chatmessage in the chat GUI
 	 */
 	public void handleChat(SPacketChat packetIn) {
-		this.gameController.ingameGUI.func_191742_a(packetIn.func_192590_c(), packetIn.getChatComponent());
+		// Center Client: ChatReceiveEvent (listeners can change or hide the message)
+		ITextComponent message = EventHooks.onChatReceive(packetIn.func_192590_c(), packetIn.getChatComponent());
+		if (message != null) {
+			this.gameController.ingameGUI.func_191742_a(packetIn.func_192590_c(), message);
+		}
 	}
 
 	/**

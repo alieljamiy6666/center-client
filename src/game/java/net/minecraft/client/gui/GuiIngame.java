@@ -1,6 +1,7 @@
 package net.minecraft.client.gui;
 
 import com.google.common.base.Predicate;
+import net.centerclient.event.EventHooks; // Center Client
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -342,6 +343,7 @@ public class GuiIngame extends Gui {
 			this.overlayPlayerList.renderPlayerlist(i, scoreboard, scoreobjective1);
 		}
 
+		EventHooks.onRender2D(partialTicks, i, j); // Center Client: Render2DEvent (HUD modules draw here)
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableLighting();
 		GlStateManager.enableAlpha();

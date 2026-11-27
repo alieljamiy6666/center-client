@@ -1,6 +1,7 @@
 package net.minecraft.client.renderer;
 
 import com.google.common.base.Predicate;
+import net.centerclient.event.EventHooks; // Center Client
 import com.google.common.base.Predicates;
 import java.util.List;
 
@@ -1242,6 +1243,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 		if (entity.posY + (double) entity.getEyeHeight() >= 128.0D) {
 			this.renderCloudsCheck(renderglobal, partialTicks, pass, d0, d1, d2);
 		}
+
+		EventHooks.onRender3D(partialTicks); // Center Client: Render3DEvent
 
 		if (this.renderHand) {
 			GlStateManager.clear(256);
