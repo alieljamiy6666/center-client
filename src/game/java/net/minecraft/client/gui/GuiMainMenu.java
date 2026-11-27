@@ -466,7 +466,7 @@ public class GuiMainMenu extends GuiScreen {
 		Branding.drawLogo(this.mc, this.width / 2, 30);
 
 		GlStateManager.pushMatrix();
-		GlStateManager.translate((float) (this.width / 2 + 90), 70.0F, 0.0F);
+		GlStateManager.translate((float) (this.width / 2 + 100), 84.0F, 0.0F); // Center Client: splash sits on the logo's corner
 		GlStateManager.rotate(-20.0F, 0.0F, 0.0F, 1.0F);
 		float f = 1.8F - MathHelper.abs(
 				MathHelper.sin((float) (Minecraft.getSystemTime() % 1000L) / 1000.0F * ((float) Math.PI * 2F)) * 0.1F);

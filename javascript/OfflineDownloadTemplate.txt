@@ -69,14 +69,14 @@
             });
         })();
     </script>
-    <link type="image/png" rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABFklEQVR42mNkQAIS0078Z6ADeJFlwQhjsyBb/rXShx72M0hMO/Ef5ggmelvOwMDA8LXSBx7ajPS2HBlwt29BRAEx4MePb2RZxMHBhVOOhVTDbn36SpJ6NT5uvPIkO+DMV+pGAwupwf7pL50dwMDAwHDiLcLbjknl9HfAtg8I9s9rJ+jvgM9Iwf7v9hn6OwA93vFlK5qHALUBcQ74M8AO+DTgITDQDvj76/fAOuDfr18DHQK/RnoU/P494qPgF0UtI4pbRO/WzYOzp5x7SJLlOUbylIcAchXcdPzxACRCpCqY2umBhZT4+/HjG8O3A+voHwK4omNAHEDtFhHjQHTNYL2iF1kWjEyw3ip3+xa6Ww4PgYHsngMA7MV/2DKtFhsAAAAASUVORK5CYII=">
+    <link type="image/png" rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABbklEQVR42sWXvU7DMBDH/w6RWhGxl4mRV8gTdOqE2FmYIl6gT9A3qBiZEWLqWCFAlShiqRgQDKgqDI06EdpEVmzHDDQkgESdytg32dJJ9/N9+O4IStLoDiUMSBj4JD+7ZeNxu2XCPhrdocwhHNPGASBut768TUwbL4vX6RUhUBFKk0oG6vXNlTpuVerJPFbS29nylPTcqi9/pMCM6QuDsgceos+XX7zrzQNlgLsF8JoW9/5obBYgFkDEi/vtybFZgIUA3koA9H5g2AMZEIniLscjux5QrfN/ywHjVUC5RMKkPYCMMwiW2QOQnCNLhT0AwQUEY7Y9YBEgYwwiTS2GQPwOwar5QOs8INn3EJw9Tf/U39/d1uuB6+cZAGCjVgMAHF29GP6K+6cAgObBIW6mcws/4bL7DSZ7lspw2f2Sy3PzAHk2U5pomwPWnop1zQFrAejo/z/FCQOfeJ2ela0oDHzi5NuqSYjcOAAQ2+v5B/NKrVVm+QquAAAAAElFTkSuQmCC">
 </head>
 <body style="margin:0px;width:100%;height:100%;overflow:hidden;background-color:#EF323D;" id="game_frame">
     <div style="margin:0px;width:100%;height:100%;font-family:sans-serif;display:flex;align-items:center;user-select:none;" id="launch_countdown_screen">
         <div style="margin:auto;text-align:center;color:#FFFFFF;">
             <!-- Center Client: launch screen restyled to match the red Center Client loading screen -->
-            <h1 style="font-size:3rem;letter-spacing:0.15em;margin:0;">CENTER CLIENT</h1>
-            <h2 style="font-weight:normal;font-size:1rem;letter-spacing:0.4em;margin:0.5em 0 2em 0;">YOUTH CENTER SMP</h2>
+            <h1 style="font-size:4rem;font-weight:900;letter-spacing:0.1em;margin:0;">CENTER</h1>
+            <h2 style="font-weight:normal;font-size:1rem;letter-spacing:0.6em;margin:0.5em 0 2em 0;">CLIENT</h2>
             <p style="margin:0 0 1em 0;">Starting in <span id="launchCountdownNumber">5</span>... &nbsp;&middot;&nbsp; this file is from ${date}</p>
             <div style="border:2px solid #FFFFFF;width:100%;height:15px;padding:2px;margin-bottom:20vh;box-sizing:border-box;">
                 <div id="launchCountdownProgress" style="background-color:#FFFFFF;width:0%;height:100%;"></div>

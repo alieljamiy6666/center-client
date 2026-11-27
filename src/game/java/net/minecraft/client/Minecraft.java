@@ -895,6 +895,7 @@ public class Minecraft implements IThreadListener {
 				this.entityRenderer.updateCameraAndRender(this.isGamePaused ? this.field_193996_ah : this.timer.field_194147_b, i1);
 				this.field_193034_aS.func_191783_a(this.scaledResolution);
 			}
+			LoadingScreen.drawFadeOut(this); // Center Client: fade the loading screen away into the game
 		}
 
 		this.updateDisplay();
