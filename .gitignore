@@ -23,6 +23,7 @@ desktopRuntime/screenshots/*
 /javascript/classes.js.map
 /javascript/assets.epk
 /javascript/Eaglercraft_*_Offline_*.html
+/javascript/Center_Client_*_Offline*.html
 
 # Center Client: system and log clutter
 .DS_Store

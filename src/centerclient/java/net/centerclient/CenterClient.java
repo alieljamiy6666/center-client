@@ -3,6 +3,7 @@ package net.centerclient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.centerclient.gui.LoadingScreen;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -51,6 +52,9 @@ public final class CenterClient {
 		mc = minecraft;
 
 		LOGGER.info(NAME + " " + VERSION + " loaded");
+
+		// Fill the loading bar to 100% before the first menu opens.
+		LoadingScreen.finish(minecraft);
 	}
 
 	/** @return the running game, or null before {@link #init(Minecraft)} has run */

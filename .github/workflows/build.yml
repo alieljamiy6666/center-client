@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: offline-html
-          path: javascript/Eaglercraft_1.12_Offline_en_US.html
+          path: javascript/Center_Client_1.12.2_Offline.html
           if-no-files-found: error
 
       - name: Upload the web build (for hosting online)

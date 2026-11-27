@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import net.centerclient.CenterClient; // Center Client
+import net.centerclient.gui.Branding; // Center Client
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.EaglercraftRandom;
 import net.lax1dude.eaglercraft.EaglercraftVersion;
@@ -167,12 +169,13 @@ public class GuiMainMenu extends GuiScreen {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 
+		// Center Client: holiday splash texts (the old ones pointed at missing language entries)
 		if (calendar.get(2) + 1 == 12 && calendar.get(5) == 24) {
-			this.splashText = I18n.format("eaglercraft.splashes.xmas");
+			this.splashText = "Merry Christmas from Youth Center SMP!";
 		} else if (calendar.get(2) + 1 == 1 && calendar.get(5) == 1) {
-			this.splashText = I18n.format("eaglercraft.splashes.newyear");
+			this.splashText = "Happy New Year from Center Client!";
 		} else if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31) {
-			this.splashText = I18n.format("eaglercraft.splashes.halloween");
+			this.splashText = "Spooky season on Youth Center SMP!";
 		}
 
 		int i = 24;
@@ -459,23 +462,8 @@ public class GuiMainMenu extends GuiScreen {
 		int k = 30;
 		this.drawGradientRect(0, 0, this.width, this.height, -2130706433, 16777215);
 		this.drawGradientRect(0, 0, this.width, this.height, 0, Integer.MIN_VALUE);
-		this.mc.getTextureManager().bindTexture(MINECRAFT_TITLE_TEXTURES);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-		if ((double) this.updateCounter < 1.0E-4D) {
-			this.drawTexturedModalRect(j + 0, 30, 0, 0, 99, 44);
-			this.drawTexturedModalRect(j + 99, 30, 129, 0, 27, 44);
-			this.drawTexturedModalRect(j + 99 + 26, 30, 126, 0, 3, 44);
-			this.drawTexturedModalRect(j + 99 + 26 + 3, 30, 99, 0, 26, 44);
-			this.drawTexturedModalRect(j + 155, 30, 0, 45, 155, 44);
-		} else {
-			this.drawTexturedModalRect(j + 0, 30, 0, 0, 155, 44);
-			this.drawTexturedModalRect(j + 155, 30, 0, 45, 155, 44);
-		}
-
-		this.mc.getTextureManager().bindTexture(field_194400_H);
-
-		drawModalRectWithCustomSizedTexture(j + 88, 67, 0.0F, 0.0F, 98, 14, 128.0F, 16.0F);
+		// Center Client: draw the Center Client logo instead of the Minecraft title and "Java Edition" pictures
+		Branding.drawLogo(this.mc, this.width / 2, 30);
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float) (this.width / 2 + 90), 70.0F, 0.0F);
@@ -486,15 +474,19 @@ public class GuiMainMenu extends GuiScreen {
 		GlStateManager.scale(f, f, f);
 		this.drawCenteredString(this.fontRendererObj, this.splashText, 0, -8, -256);
 		GlStateManager.popMatrix();
-		String s = "Minecraft 1.12.2";
+		// Center Client: show the Center Client version in the bottom-left corner, and credit Eaglercraft
+		String s = "Minecraft " + CenterClient.MC_VERSION;
 
 		if (this.mc.isDemo()) {
 			s = s + " Demo";
 		}
 
-		this.drawString(this.fontRendererObj, s, 2, this.height - 20, -1);
-		this.drawString(this.fontRendererObj, "Eaglercraft 1.12.2 (" + EaglercraftVersion.projectOriginVersion + ")", 2,
-				this.height - 10, -1);
+		this.drawString(this.fontRendererObj, s, 2, this.height - 20, Branding.COLOR_FADED_TEXT);
+		this.drawString(this.fontRendererObj, CenterClient.NAME + " v" + CenterClient.VERSION, 2, this.height - 10,
+				Branding.COLOR_ACCENT);
+		String credit = "Built on Eaglercraft 1.12";
+		this.drawString(this.fontRendererObj, credit, this.width - this.fontRendererObj.getStringWidth(credit) - 2,
+				this.height - 20, Branding.COLOR_FADED_TEXT);
 		this.drawString(this.fontRendererObj, "Resources copyright Mojang AB", this.field_193979_N, this.height - 10,
 				-1);
 

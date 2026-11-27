@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import net.centerclient.CenterClient; // Center Client
+import net.centerclient.gui.LoadingScreen; // Center Client
 import net.lax1dude.eaglercraft.ClientUUIDLoadingCache;
 import net.lax1dude.eaglercraft.Display;
 import net.lax1dude.eaglercraft.EagRuntime;
@@ -466,8 +467,8 @@ public class Minecraft implements IThreadListener {
 		Bootstrap.register2();
 		this.renderEngine = new TextureManager(this.mcResourceManager);
 		this.mcResourceManager.registerReloadListener(this.renderEngine);
-		this.drawSplashScreen(this.renderEngine);
-		this.saveLoader = new EaglerSaveFormat(new VFile2(this.mcDataDir, "worlds"), this.dataFixer);
+		LoadingScreen.setProgress(this, 0.05F); // Center Client: Center Client loading screen instead of the Mojang one
+		this.saveLoader =new EaglerSaveFormat(new VFile2(this.mcDataDir, "worlds"), this.dataFixer);
 		this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
 		this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
 		this.scaledResolution = new ScaledResolution(this);
@@ -486,6 +487,7 @@ public class Minecraft implements IThreadListener {
 		this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
 		this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
 		this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
+		LoadingScreen.setProgress(this, 0.20F); // Center Client: sounds and fonts loaded
 		this.mouseHelper = new MouseHelper();
 		this.checkGLError("Pre startup");
 		GlStateManager.enableTexture2D();
@@ -505,8 +507,10 @@ public class Minecraft implements IThreadListener {
 		this.renderEngine.loadTickableTexture(TextureMap.LOCATION_BLOCKS_TEXTURE, this.textureMapBlocks);
 		this.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		this.textureMapBlocks.setBlurMipmapDirect(false, this.gameSettings.mipmapLevels > 0);
+		LoadingScreen.setProgress(this, 0.35F); // Center Client: block textures loaded
 		this.modelManager = new ModelManager(this.textureMapBlocks);
 		this.mcResourceManager.registerReloadListener(this.modelManager);
+		LoadingScreen.setProgress(this, 0.70F); // Center Client: block and item models loaded
 		this.blockColors = BlockColors.init();
 		this.itemColors = ItemColors.init(this.blockColors);
 		this.renderItem = new RenderItem(this.renderEngine, this.modelManager, this.itemColors);
@@ -520,8 +524,10 @@ public class Minecraft implements IThreadListener {
 		this.mcResourceManager.registerReloadListener(this.blockRenderDispatcher);
 		this.renderGlobal = new RenderGlobal(this);
 		this.mcResourceManager.registerReloadListener(this.renderGlobal);
+		LoadingScreen.setProgress(this, 0.85F); // Center Client: world renderer ready
 		this.func_193986_ar();
 		this.mcResourceManager.registerReloadListener(this.field_193995_ae);
+		LoadingScreen.setProgress(this, 0.95F); // Center Client: creative search ready
 		GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
 		this.effectRenderer = new ParticleManager(this.world, this.renderEngine);
 		SkinPreviewRenderer.initialize();
@@ -605,7 +611,7 @@ public class Minecraft implements IThreadListener {
 
 	private void createDisplay() {
 		Display.create();
-		Display.setTitle("Eaglercraft 1.12.2");
+		Display.setTitle(CenterClient.NAME + " " + CenterClient.MC_VERSION); // Center Client
 	}
 
 	public String getVersion() {
