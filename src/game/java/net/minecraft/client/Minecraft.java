@@ -1672,6 +1672,7 @@ public class Minecraft implements IThreadListener {
 	private void runTickMouse() throws IOException {
 		while (Mouse.next()) {
 			int i = Mouse.getEventButton();
+			EventHooks.onMouseButton(i, Mouse.getEventButtonState()); // Center Client: MouseEvent
 			KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
 
 			if (Mouse.getEventButtonState()) {

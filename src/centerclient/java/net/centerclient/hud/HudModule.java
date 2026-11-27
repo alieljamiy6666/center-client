@@ -41,7 +41,7 @@ public abstract class HudModule extends Module {
 	public static final float MIN_SCALE = 0.5F;
 	public static final float MAX_SCALE = 2.0F;
 
-	protected final BooleanSetting background = add(new BooleanSetting("Background", true));
+	protected final BooleanSetting background = add(new BooleanSetting("Background", backgroundByDefault()));
 	protected final NumberSetting scale = add(new NumberSetting("Scale", 1.0, MIN_SCALE, MAX_SCALE, 0.05));
 
 	private final int defaultAnchorX;
@@ -95,6 +95,11 @@ public abstract class HudModule extends Module {
 	 */
 	public boolean isEmpty() {
 		return false;
+	}
+
+	/** Whether the background starts on. Override to return false (it must not use other fields). */
+	protected boolean backgroundByDefault() {
+		return true;
 	}
 
 	/** The background color. Override to change it. */

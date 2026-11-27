@@ -29,7 +29,7 @@ public class CoordinatesModule extends TextHudModule {
 
 	public CoordinatesModule() {
 		super("Coordinates", "Shows your position, the direction you're facing and the biome", Category.HUD, START,
-				START, 0.005F, 0.25F);
+				START, 0.005F, 0.31F);
 	}
 
 	@Override

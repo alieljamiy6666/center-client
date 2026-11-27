@@ -1,6 +1,7 @@
 package net.centerclient.event;
 
 import net.centerclient.CenterClient;
+import net.centerclient.util.ClickTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.text.ChatType;
@@ -19,6 +20,7 @@ public final class EventHooks {
 	private static final Render2DEvent RENDER_2D = new Render2DEvent();
 	private static final Render3DEvent RENDER_3D = new Render3DEvent();
 	private static final KeyEvent KEY = new KeyEvent();
+	private static final MouseEvent MOUSE = new MouseEvent();
 	private static final ChatReceiveEvent CHAT = new ChatReceiveEvent();
 	private static final WorldLoadEvent WORLD_LOAD = new WorldLoadEvent();
 	private static final ServerJoinEvent SERVER_JOIN = new ServerJoinEvent();
@@ -52,6 +54,17 @@ public final class EventHooks {
 		if (CenterClient.isInitialized()) {
 			CenterClient.EVENTS.post(KEY.set(key, pressed, repeat, inGui));
 		}
+	}
+
+	/** Minecraft.runTickMouse(), for every mouse button going down or up while playing. */
+	public static void onMouseButton(int button, boolean pressed) {
+		if (button < 0 || !CenterClient.isInitialized()) {
+			return; // not a button (mouse movement or the wheel)
+		}
+		if (pressed) {
+			ClickTracker.onGameMouseDown(button);
+		}
+		CenterClient.EVENTS.post(MOUSE.set(button, pressed));
 	}
 
 	/**

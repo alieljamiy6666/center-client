@@ -13,7 +13,9 @@ import net.centerclient.module.ModuleManager;
 import net.centerclient.module.hud.ArmorStatusModule;
 import net.centerclient.module.hud.ClockModule;
 import net.centerclient.module.hud.CoordinatesModule;
+import net.centerclient.module.hud.CpsModule;
 import net.centerclient.module.hud.FpsModule;
+import net.centerclient.module.hud.KeystrokesModule;
 import net.centerclient.module.hud.PingModule;
 import net.centerclient.module.hud.PotionEffectsModule;
 import net.centerclient.module.hud.ServerInfoModule;
@@ -106,6 +108,8 @@ public final class CenterClient {
 		MODULES.register(new ServerInfoModule());
 		MODULES.register(new ArmorStatusModule());
 		MODULES.register(new PotionEffectsModule());
+		MODULES.register(new KeystrokesModule());
+		MODULES.register(new CpsModule());
 		// Misc
 		MODULES.register(new TestModule());
 	}
