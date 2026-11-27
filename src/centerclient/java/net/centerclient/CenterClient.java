@@ -1,5 +1,7 @@
 package net.centerclient;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,6 +11,8 @@ import net.centerclient.gui.CenterMainMenu;
 import net.centerclient.gui.LoadingScreen;
 import net.centerclient.gui.VanillaMainMenu;
 import net.centerclient.gui.clickgui.ClickGui;
+import net.centerclient.hud.HudModule;
+import net.centerclient.module.Module;
 import net.centerclient.module.ModuleManager;
 import net.centerclient.module.hud.ArmorStatusModule;
 import net.centerclient.module.hud.ClockModule;
@@ -136,5 +140,25 @@ public final class CenterClient {
 	/** @return true once Center Client has started */
 	public static boolean isInitialized() {
 		return initialized;
+	}
+
+	/**
+	 * True while any Center Client HUD element is turned on. Eaglercraft's own
+	 * small FPS and coordinates text in the top-left corner is hidden then,
+	 * because it would draw on top of the Center Client HUD (the FPS and
+	 * Coordinates modules replace it).
+	 */
+	public static boolean isHudShowing() {
+		if (!initialized) {
+			return false;
+		}
+		List<Module> modules = MODULES.getModules();
+		for (int i = 0; i < modules.size(); ++i) {
+			Module module = modules.get(i);
+			if (module.isEnabled() && HudModule.isHud(module)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

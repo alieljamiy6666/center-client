@@ -282,7 +282,7 @@ public class CenterMainMenu extends GuiScreen {
 			return;
 		}
 		GlStateManager.pushMatrix();
-		GlStateManager.translate((float) (this.width / 2 + 100), (float) (logoY + 54), 0.0F);
+		GlStateManager.translate((float) (this.width / 2 + 104), (float) (logoY + 32), 0.0F); // over the end of "CENTER", clear of "CLIENT"
 		GlStateManager.rotate(-20.0F, 0.0F, 0.0F, 1.0F);
 		float pulse = 1.8F - MathHelper.abs(MathHelper.sin((now % 1000L) / 1000.0F * 6.2832F) * 0.1F);
 		pulse = pulse * 100.0F / (float) (this.fontRendererObj.getStringWidth(splashText) + 32);

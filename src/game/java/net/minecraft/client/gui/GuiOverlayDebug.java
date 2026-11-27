@@ -50,7 +50,7 @@ public class GuiOverlayDebug extends Gui {
 			if (this.mc.gameSettings.showLagometer) {
 				this.renderLagometer();
 			}
-		} else {
+		} else if (!net.centerclient.CenterClient.isHudShowing()) { // Center Client: hide this when the Center Client HUD is on
 			int i = 2;
 
 			if (this.mc.gameSettings.hudFps) {
