@@ -25,6 +25,8 @@ import org.teavm.jso.webgl.WebGLUniformLocation;
  */
 public interface WebGL2RenderingContext extends WebGLRenderingContext {
 
+	void scissor(int x, int y, int width, int height); // Center Client
+
 	int TEXTURE_MAX_LEVEL              = 0x0000813D;
 	int TEXTURE_MAX_ANISOTROPY_EXT     = 0x000084FE;
 	int UNSIGNED_INT_24_8              = 0x000084FA;

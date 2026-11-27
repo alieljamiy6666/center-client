@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.centerclient.CenterClient;
+import net.centerclient.gui.clickgui.ClickGui;
 import net.centerclient.theme.Theme;
 import net.centerclient.util.Animation;
 import net.centerclient.util.ColorUtil;
@@ -18,6 +19,7 @@ import net.centerclient.util.RenderUtil;
 import net.centerclient.util.TextUtil;
 import net.lax1dude.eaglercraft.EaglercraftRandom;
 import net.lax1dude.eaglercraft.IOUtils;
+import net.lax1dude.eaglercraft.KeyboardConstants;
 import net.lax1dude.eaglercraft.opengl.GlStateManager;
 import net.lax1dude.eaglercraft.opengl.WorldRenderer;
 import net.lax1dude.eaglercraft.profile.EaglerProfile;
@@ -361,7 +363,11 @@ public class CenterMainMenu extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		// the title screen ignores keys (Escape shouldn't close it)
+		// Right Shift opens the Center Client menu here too; other keys are ignored
+		// (Escape shouldn't close the title screen)
+		if (keyCode == KeyboardConstants.KEY_RSHIFT) {
+			this.mc.displayGuiScreen(new ClickGui(this));
+		}
 	}
 
 	@Override

@@ -200,6 +200,11 @@ public class PlatformOpenGL {
 	public static final void _wglViewport(int x, int y, int w, int h) {
 		ctx.viewport(x, y, w, h);
 	}
+
+	// Center Client: clipping rectangle, used to keep scrolling lists inside their boxes
+	public static final void _wglScissor(int x, int y, int w, int h) {
+		ctx.scissor(x, y, w, h);
+	}
 	
 	public static final void _wglBlendFunc(int src, int dst) {
 		ctx.blendFunc(src, dst);

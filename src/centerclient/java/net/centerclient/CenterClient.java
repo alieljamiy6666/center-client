@@ -8,6 +8,7 @@ import net.centerclient.event.EventBus;
 import net.centerclient.gui.CenterMainMenu;
 import net.centerclient.gui.LoadingScreen;
 import net.centerclient.gui.VanillaMainMenu;
+import net.centerclient.gui.clickgui.ClickGui;
 import net.centerclient.module.ModuleManager;
 import net.centerclient.module.misc.TestModule;
 import net.minecraft.client.Minecraft;
@@ -75,6 +76,7 @@ public final class CenterClient {
 		registerModules();
 		CONFIG = new ConfigManager(MODULES, EVENTS);
 		CONFIG.load(); // brings back saved settings, profiles and the accent color
+		ClickGui.registerOpenKey(EVENTS); // Right Shift opens the Center Client menu
 		initialized = true;
 
 		LOGGER.info(NAME + " " + VERSION + " loaded with " + MODULES.getModules().size() + " modules");

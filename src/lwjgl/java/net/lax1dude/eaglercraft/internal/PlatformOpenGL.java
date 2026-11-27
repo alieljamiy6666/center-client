@@ -186,6 +186,11 @@ public class PlatformOpenGL {
 		glViewport(x, y, w, h);
 	}
 
+	// Center Client: clipping rectangle, used to keep scrolling lists inside their boxes
+	public static final void _wglScissor(int x, int y, int w, int h) {
+		glScissor(x, y, w, h);
+	}
+
 	public static final void _wglBlendFunc(int src, int dst) {
 		glBlendFunc(src, dst);
 	}

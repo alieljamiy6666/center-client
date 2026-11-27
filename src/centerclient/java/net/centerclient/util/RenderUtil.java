@@ -1,7 +1,10 @@
 package net.centerclient.util;
 
+import net.lax1dude.eaglercraft.internal.PlatformOpenGL;
 import net.lax1dude.eaglercraft.opengl.GlStateManager;
+import net.lax1dude.eaglercraft.opengl.RealOpenGLEnums;
 import net.lax1dude.eaglercraft.opengl.WorldRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
@@ -36,7 +39,19 @@ public final class RenderUtil {
 		}
 	}
 
+	/** Multiplies the see-through amount of everything drawn here, for fading whole menus in and out. */
+	private static float globalAlpha = 1.0F;
+
 	private RenderUtil() {
+	}
+
+	/** Fades everything drawn with RenderUtil (1 = normal). Always set it back to 1 when done. */
+	public static void setGlobalAlpha(float alpha) {
+		globalAlpha = alpha < 0.0F ? 0.0F : (alpha > 1.0F ? 1.0F : alpha);
+	}
+
+	public static float getGlobalAlpha() {
+		return globalAlpha;
 	}
 
 	// ---- Plain shapes -----------------------------------------------------------
@@ -164,6 +179,51 @@ public final class RenderUtil {
 		end();
 	}
 
+	// ---- Clipping -----------------------------------------------------------------
+
+	/**
+	 * From now on, only draw inside this rectangle (in GUI pixels). Anything
+	 * outside is cut off, which is how scrolling lists stay inside their box.
+	 * Always call {@link #endClip()} afterwards.
+	 */
+	public static void beginClip(float x, float y, float width, float height) {
+		if (clipScale != 1.0F) {
+			// the menu is being drawn bigger or smaller around a point (open/close animation)
+			x = clipCenterX + (x - clipCenterX) * clipScale;
+			y = clipCenterY + (y - clipCenterY) * clipScale;
+			width *= clipScale;
+			height *= clipScale;
+		}
+		Minecraft mc = Minecraft.getMinecraft();
+		int scale = mc.scaledResolution != null ? mc.scaledResolution.getScaleFactor() : 1;
+		int left = (int) Math.floor(x * scale);
+		int top = (int) Math.floor(y * scale);
+		int right = (int) Math.ceil((x + width) * scale);
+		int bottom = (int) Math.ceil((y + height) * scale);
+		PlatformOpenGL._wglEnable(RealOpenGLEnums.GL_SCISSOR_TEST);
+		// the screen's 0,0 is the bottom-left corner here, so flip the y
+		PlatformOpenGL._wglScissor(left, mc.displayHeight - bottom, Math.max(0, right - left), Math.max(0, bottom - top));
+	}
+
+	/** Stops clipping. */
+	public static void endClip() {
+		PlatformOpenGL._wglDisable(RealOpenGLEnums.GL_SCISSOR_TEST);
+	}
+
+	private static float clipCenterX;
+	private static float clipCenterY;
+	private static float clipScale = 1.0F;
+
+	/**
+	 * Tells {@link #beginClip} that everything is currently drawn scaled around
+	 * a point (like a menu growing as it opens). Set scale back to 1 when done.
+	 */
+	public static void setClipScale(float centerX, float centerY, float scale) {
+		clipCenterX = centerX;
+		clipCenterY = centerY;
+		clipScale = scale;
+	}
+
 	// ---- Batches: many small rectangles in one go ---------------------------------
 
 	/**
@@ -231,7 +291,11 @@ public final class RenderUtil {
 	}
 
 	private static void vertex(WorldRenderer buf, float x, float y, int color) {
+		int alpha = ColorUtil.alpha(color);
+		if (globalAlpha < 1.0F) {
+			alpha = (int) (alpha * globalAlpha);
+		}
 		buf.pos((double) x, (double) y, 0.0D).color(ColorUtil.red(color), ColorUtil.green(color),
-				ColorUtil.blue(color), ColorUtil.alpha(color)).endVertex();
+				ColorUtil.blue(color), alpha).endVertex();
 	}
 }

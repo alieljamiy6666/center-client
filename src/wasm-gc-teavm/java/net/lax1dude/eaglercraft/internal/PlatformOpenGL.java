@@ -110,6 +110,10 @@ public class PlatformOpenGL {
 	@Import(module = "platformOpenGL", name = "glViewport")
 	public static native void _wglViewport(int x, int y, int w, int h);
 
+	// Center Client: clipping rectangle
+	@Import(module = "platformOpenGL", name = "glScissor")
+	public static native void _wglScissor(int x, int y, int w, int h);
+
 	@Import(module = "platformOpenGL", name = "glBlendFunc")
 	public static native void _wglBlendFunc(int src, int dst);
 
