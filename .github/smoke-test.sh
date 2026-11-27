@@ -230,6 +230,10 @@ if grep -q "Screen: GuiWorldSelection" "$LOG"; then
 	click_gui $((GW / 2 + 4 + 75)) $((GH - 52 + 10)) # "Create New World"
 	sleep 2
 fi
+if grep -q "Screen: GuiScreenCreateWorldSelection" "$LOG"; then
+	click_gui $((GW / 2)) $((GH / 4 + 40 + 10)) # Eaglercraft's "Create New World"
+	sleep 2
+fi
 wait_for_log "Screen: GuiCreateWorld" 10
 click_gui $((GW / 2 - 155 + 75)) $((GH - 28 + 10)) # "Create New World"
 echo "Making a world..."
