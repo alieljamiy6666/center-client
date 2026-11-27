@@ -788,6 +788,8 @@ public class Minecraft implements IThreadListener {
 			this.ingameGUI.getChatGUI().clearChatMessages(true);
 		}
 
+		guiScreenIn = CenterClient.replaceScreen(guiScreenIn); // Center Client: show the Center Client title screen
+
 		this.currentScreen = guiScreenIn;
 		this.scaledResolution = new ScaledResolution(this);
 

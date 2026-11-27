@@ -12,7 +12,6 @@ import java.util.List;
 
 import net.centerclient.CenterClient; // Center Client
 import net.centerclient.gui.Branding; // Center Client
-import net.centerclient.gui.ThemeTestScreen; // Center Client
 import net.centerclient.theme.Theme; // Center Client
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.EaglercraftRandom;
@@ -74,7 +73,7 @@ public class GuiMainMenu extends GuiScreen {
 			+ TextFormatting.RESET + " for more information.";
 
 	private static final ResourceLocation SPLASH_TEXTS = new ResourceLocation("texts/splashes.txt");
-	private static final int THEME_TEST_BUTTON_ID = 1100; // Center Client
+	private static final int CENTER_MENU_BUTTON_ID = 1100; // Center Client
 	private static final ResourceLocation MINECRAFT_TITLE_TEXTURES = new ResourceLocation(
 			"textures/gui/title/minecraft.png");
 	private static final ResourceLocation field_194400_H = new ResourceLocation("textures/gui/title/edition.png");
@@ -193,8 +192,8 @@ public class GuiMainMenu extends GuiScreen {
 		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options")));
 		this.buttonList.add(new GuiButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("Edit Profile")));
 		this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
-		// Center Client: temporary button to open the theme test screen (the new main menu in Step 5 replaces it)
-		this.buttonList.add(new GuiButton(THEME_TEST_BUTTON_ID, 4, 4, 80, 20, "Theme Test"));
+		// Center Client: this is the "Vanilla menu" now; this button goes back to the Center Client menu
+		this.buttonList.add(new GuiButton(CENTER_MENU_BUTTON_ID, 4, 4, 90, 20, "Center Client menu"));
 	}
 
 	/**
@@ -229,8 +228,8 @@ public class GuiMainMenu extends GuiScreen {
 	 * buttons)
 	 */
 	protected void actionPerformed(GuiButton button) throws IOException {
-		if (button.id == THEME_TEST_BUTTON_ID) { // Center Client
-			this.mc.displayGuiScreen(new ThemeTestScreen(this));
+		if (button.id == CENTER_MENU_BUTTON_ID) { // Center Client
+			this.mc.displayGuiScreen(new GuiMainMenu()); // gets swapped for the Center Client menu
 		}
 
 		if (button.id == 0) {

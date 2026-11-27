@@ -164,6 +164,25 @@ public final class RenderUtil {
 		end();
 	}
 
+	// ---- Batches: many small rectangles in one go ---------------------------------
+
+	/**
+	 * Starts a batch. Add rectangles with {@link #batchRect}, then call
+	 * {@link #endBatch()}. Use this for lots of small shapes, like particles:
+	 * they all go to the graphics card in a single trip.
+	 */
+	public static WorldRenderer beginBatch() {
+		return begin();
+	}
+
+	public static void batchRect(WorldRenderer batch, float x, float y, float width, float height, int color) {
+		quad(batch, x, y, x + width, y + height, color, color);
+	}
+
+	public static void endBatch() {
+		end();
+	}
+
 	// ---- Internals --------------------------------------------------------------
 
 	private static int clampRadius(int radius, float width, int rows) {

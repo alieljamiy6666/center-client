@@ -125,8 +125,8 @@ public class ThemeTestScreen extends GuiScreen {
 		GlStateManager.translate(0.0F, (1.0F - e) * 12.0F, 0.0F); // slide up into place when opened
 
 		TextUtil.drawCentered(this.fontRendererObj, "Center Client Theme", this.width / 2.0F, top, Theme.accent(), true);
-		TextUtil.drawCentered(this.fontRendererObj, "Step 4 test screen", this.width / 2.0F, top + 11,
-				Theme.TEXT_FADED, false);
+		TextUtil.drawCentered(this.fontRendererObj, "Pick your accent color (more settings coming soon)",
+				this.width / 2.0F, top + 11, Theme.TEXT_FADED, false);
 
 		drawSwatches(top + 26);
 		int py = panelsY();
